@@ -42,8 +42,7 @@ public class ProductView extends Div {
     H1 title = new H1("Product Table");
     Button createButton = new Button("Add Product", new Icon(VaadinIcon.PLUS));
     Button modButton = new Button("", new Icon(VaadinIcon.EDIT));
-    Button deleteButton = new Button("Delete Product", new Icon(VaadinIcon.TRASH));
-    HorizontalLayout header = new HorizontalLayout(title, createButton, modButton, deleteButton);
+    HorizontalLayout header = new HorizontalLayout(title, createButton, modButton);
 
     public ProductView(ProductService productService){
         addClassName("product-view");
@@ -66,10 +65,8 @@ public class ProductView extends Div {
         buttonLayout.addClassName("button-layout");
         createButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         modButton.addThemeVariants(ButtonVariant.LUMO_TERTIARY);
-        deleteButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
         buttonLayout.add(createButton);
         buttonLayout.add(modButton);
-        buttonLayout.add(deleteButton);
         createButton.addClickListener(e ->
                 createButton.getUI().ifPresent(ui ->
                         ui.navigate("addProducts"))
