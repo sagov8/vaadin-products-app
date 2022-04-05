@@ -1,8 +1,10 @@
 package com.example.application.views;
 
+import com.example.application.data.entity.Product;
 import com.example.application.data.entity.User;
 import com.example.application.security.AuthenticatedUser;
 import com.example.application.views.login.LoginView;
+import com.example.application.views.products.ProductView;
 import com.example.application.views.register.RegisterView;
 import com.example.application.views.welcomeadmin.WelcomeAdminView;
 import com.example.application.views.welcomeuser.WelcomeUserView;
@@ -101,7 +103,7 @@ public class MainLayout extends AppLayout {
     }
 
     private Component createDrawerContent() {
-        H2 appName = new H2("My App");
+        H2 appName = new H2("First app");
         appName.addClassNames("app-name");
 
         com.vaadin.flow.component.html.Section section = new com.vaadin.flow.component.html.Section(appName,
@@ -138,6 +140,8 @@ public class MainLayout extends AppLayout {
                 new MenuItemInfo("Welcome Admin", "lab la-codepen", WelcomeAdminView.class), //
 
                 new MenuItemInfo("Login", "la la-glass-cheers", LoginView.class), //
+
+                new MenuItemInfo("Products", "la la-cube", ProductView.class)
 
         };
     }

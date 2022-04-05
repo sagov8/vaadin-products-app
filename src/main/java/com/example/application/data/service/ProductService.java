@@ -1,30 +1,32 @@
 package com.example.application.data.service;
 
-import com.example.application.data.entity.User;
-import java.util.Optional;
-import java.util.UUID;
+import com.example.application.data.entity.Product;
+import com.vaadin.flow.component.crud.CrudFilter;
+import com.vaadin.flow.data.provider.AbstractBackEndDataProvider;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
+
 @Service
 @Transactional
-public class UserService {
+public class ProductService {
 
-    private final UserRepository repository;
+    private final ProductRepository repository;
 
     @Autowired
-    public UserService(UserRepository repository) {
+    public ProductService(ProductRepository repository) {
         this.repository = repository;
     }
 
-    public Optional<User> get(UUID id) {
+    public Optional<Product> get(UUID id) {
         return repository.findById(id);
     }
 
-    public User update(User entity) {
+    public Product update(Product entity) {
         return repository.save(entity);
     }
 
@@ -32,12 +34,11 @@ public class UserService {
         repository.deleteById(id);
     }
 
-    public Page<User> list(Pageable pageable) {
-        return repository.findAll(pageable);
+    public List<Product> list() {
+        return repository.findAll();
     }
 
     public int count() {
         return (int) repository.count();
     }
-
 }

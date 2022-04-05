@@ -2,6 +2,8 @@ package com.example.application.data.entity;
 
 import com.example.application.data.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.hibernate.annotations.Type;
+
 import java.util.Set;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
@@ -23,6 +25,7 @@ public class User extends AbstractEntity {
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<Role> roles;
     @Lob
+    @Type(type = "org.hibernate.type.ImageType")
     private String profilePictureUrl;
 
     public String getUsername() {

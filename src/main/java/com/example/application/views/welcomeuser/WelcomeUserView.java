@@ -30,7 +30,7 @@ public class WelcomeUserView extends Div implements AfterNavigationObserver {
         setSizeFull();
         grid.setHeight("100%");
         grid.addThemeVariants(GridVariant.LUMO_NO_BORDER, GridVariant.LUMO_NO_ROW_BORDERS);
-        grid.addComponentColumn(person -> createCard(person));
+        grid.addComponentColumn(this::createCard);
         add(grid);
     }
 
