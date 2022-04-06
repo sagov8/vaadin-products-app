@@ -1,11 +1,18 @@
-.add-product-view {
+.add-product-view  {
     display: block;
     margin: 0 auto;
     max-width: 1024px;
     padding: 0 var(--lumo-space-l);
 }
 
-.register-view .button-layout {
+.product-view .button-layout{
     margin-bottom: var(--lumo-space-l);
     margin-top: var(--lumo-space-m);
+}
+
+.edit-product-view{
+    display: block;
+    margin: 0 auto;
+    max-width: 1024px;
+    padding: 0 var(--lumo-space-l);
 }

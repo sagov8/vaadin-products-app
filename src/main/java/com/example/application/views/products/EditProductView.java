@@ -4,26 +4,35 @@ import com.example.application.data.entity.Product;
 import com.example.application.data.service.ProductService;
 import com.example.application.views.MainLayout;
 import com.vaadin.flow.component.Component;
+import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
+import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.page.Page;
 import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
-import com.vaadin.flow.router.PageTitle;
-import com.vaadin.flow.router.Route;
-
+import com.vaadin.flow.router.*;
 import javax.annotation.security.RolesAllowed;
+import java.util.UUID;
 
-@PageTitle("AddProducts")
-@Route(value = "addProducts", layout = MainLayout.class)
+@PageTitle("EditProducts")
+@Route(value = "product/:productID?/edit", layout = MainLayout.class)
 @RolesAllowed({"ADMIN"})
-public class AddProductView extends Div {
+public class EditProductView extends Div implements AfterNavigationObserver, BeforeEnterObserver {
+
+    ProductService productService;
+    Product currentProduct;
+
+    String currentId;
+    Page page;
+    H1 url = new H1();
 
     private TextField name = new TextField("Product Name");
     private TextField sku = new TextField("SKU");
@@ -38,8 +47,9 @@ public class AddProductView extends Div {
 
     private Binder<Product> binder = new Binder(Product.class);
 
-    public AddProductView(ProductService productService){
-        addClassName("add-product-view");
+    public EditProductView(ProductService productService){
+
+        addClassName("edit-product-view");
         setSizeFull();
 
         add(createTitle());
@@ -54,7 +64,7 @@ public class AddProductView extends Div {
         cancel.addClickListener(e -> clearForm());
         save.addClickListener(e -> {
             productService.update(binder.getBean());
-            Notification.show(binder.getBean().getClass().getSimpleName() + " saved.");
+            Notification.show(binder.getBean().getClass().getSimpleName() + " Product saved.");
             clearForm();
         });
     }
@@ -67,9 +77,9 @@ public class AddProductView extends Div {
         return new H3("Product information");
     }
 
+
     private Component createFormLayout() {
         FormLayout formLayout = new FormLayout();
-
         cost.setPrefixComponent(dollarPrefix);
         suggested_cell_price.setPrefixComponent(dollarPrefix);
         current_inventory.setMin(0);
@@ -87,4 +97,25 @@ public class AddProductView extends Div {
         return buttonLayout;
     }
 
+    @Override
+    public void beforeEnter(BeforeEnterEvent event) {
+
+    }
+
+    private boolean hasChanges() {
+
+        return true;
+    }
+
+    @Override
+    public void afterNavigation(AfterNavigationEvent event) {
+        UI.getCurrent().getPage().fetchCurrentURL(currentUrl -> {
+            // This is your own method that you may do something with the url.
+            // Please note that this method runs asynchronously
+            currentId = currentUrl.getPath().toString().split("/")[2];
+            url.setText(currentId);
+            add(url);
+        });
+
+    }
 }
