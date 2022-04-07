@@ -12,7 +12,6 @@ import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H2;
-import com.vaadin.flow.component.html.H3;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.page.Page;
@@ -20,25 +19,25 @@ import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
-import com.vaadin.flow.data.binder.ValidationException;
+import com.vaadin.flow.dom.Element;
+import com.vaadin.flow.dom.ElementFactory;
 import com.vaadin.flow.router.*;
+import org.aspectj.weaver.ast.Not;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.security.RolesAllowed;
-import java.util.Optional;
 import java.util.UUID;
 
 @PageTitle("EditProducts")
 @Route(value = "product", layout = MainLayout.class)
 @RolesAllowed({"ADMIN"})
-public class EditProductView extends Div implements HasUrlParameter<String>{
+public class EditProductView extends Div implements HasUrlParameter<String>, AfterNavigationObserver{
 
 
     Product currentProduct;
-
+    ProductService productService;
     String currentId;
-    UUID id = UUID.fromString("bf7de79e-98d7-4956-96f1-244d4704d37d");
-    Page page;
+    UUID id;
     H1 url = new H1();
 
     private Binder<Product> binder = new Binder(Product.class);
@@ -55,24 +54,31 @@ public class EditProductView extends Div implements HasUrlParameter<String>{
     private Button save = new Button("Save");
 
     @Override
-    public void setParameter(BeforeEvent event, String parameter) {
-        currentId = parameter;
+    public void setParameter(BeforeEvent event, @OptionalParameter String parameter) {
+        this.currentId = parameter;
+    }
+
+    @Override
+    public void afterNavigation(AfterNavigationEvent event) {
+        try{
+            Notification.show(this.currentId);
+            this.id = UUID.fromString((this.currentId));
+            Notification.show(""+this.id);
+            obtainProduct(productService, this.id);
+            Notification.show(this.currentProduct.getName());
+        } catch (Exception e) {
+
+        }
     }
 
 
     public EditProductView(ProductService productService){
-
         addClassName("edit-product-view");
         setSizeFull();
-
-        if(productService.get(id).isPresent()){
-            currentProduct = productService.get(id).get();
-            binder.setBean(currentProduct);
-            Notification.show(currentProduct.getName());
-        }
         add(createTitle());
         add(createFormLayout());
         add(createButtonLayout(productService));
+
         initBinder();
         dollarPrefix.setText("$");
         dollarPrefix2.setText("$");
@@ -80,6 +86,14 @@ public class EditProductView extends Div implements HasUrlParameter<String>{
 
     private void clearForm() {
         binder.setBean(new Product());
+    }
+
+
+    private void obtainProduct(ProductService productService, UUID uuid){
+        if(productService.get(uuid).isPresent()){
+            this.currentProduct = productService.get(uuid).get();
+            binder.setBean(this.currentProduct);
+        }
     }
 
     private Component createFormLayout() {
@@ -132,46 +146,4 @@ public class EditProductView extends Div implements HasUrlParameter<String>{
         buttonLayout.addClassName("button-layout");
         return buttonLayout;
     }
-    /*
-    @Override
-    public void beforeEnter(BeforeEnterEvent event) {
-
-    }
-
-    private boolean hasChanges() {
-
-        return true;
-    }
-
-    @Override
-    public void afterNavigation(AfterNavigationEvent event) {
-        if(currentId != null){
-            productService.get(UUID.fromString(currentId)).ifPresent(product ->
-                    name.setValue(product.getName()));
-        } else {
-            Notification.show("No object selected");
-        }
-    }
-
-    @Override
-    public void onAttach(AttachEvent event){
-
-        UI.getCurrent().getPage().fetchCurrentURL(currentUrl -> {
-            // This is your own method that you may do something with the url.
-            // Please note that this method runs asynchronously
-            try{
-                Thread.sleep(1000);
-                currentId = currentUrl.getPath().toString().split("/")[2];
-                url.setText(currentId);
-                add(url);
-            } catch(InterruptedException ignored) {
-
-            }
-
-        });
-        // view is loaded at this point. You can for example execute javascript which relies on certain elements being in the page
-
-    }
-
-     */
 }

@@ -61,9 +61,9 @@ public class ProductView extends Div {
                     buttonEdit.addThemeVariants(ButtonVariant.LUMO_ICON,
                             ButtonVariant.LUMO_PRIMARY,
                             ButtonVariant.LUMO_TERTIARY);
-                    buttonEdit.addClickListener(e -> {buttonEdit.getUI().ifPresent(ui ->
-                            ui.navigate("product/" + product.getId()));
-
+                    buttonEdit.addClickListener(e -> {buttonEdit.getUI().ifPresent(ui ->{
+                                ui.navigate("product/" + product.getId());
+                    });
                     });
                     buttonEdit.setIcon(new Icon(VaadinIcon.EDIT));
                 })).setHeader("Edit");
