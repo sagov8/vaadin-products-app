@@ -1,11 +1,10 @@
 package com.example.application.views.products;
 
 import com.example.application.data.entity.Product;
+import com.example.application.data.service.ProductRepository;
 import com.example.application.data.service.ProductService;
 import com.example.application.views.MainLayout;
-import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.formlayout.FormLayout;
@@ -14,17 +13,12 @@ import com.vaadin.flow.component.html.H1;
 import com.vaadin.flow.component.html.H2;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
-import com.vaadin.flow.component.page.Page;
 import com.vaadin.flow.component.textfield.IntegerField;
 import com.vaadin.flow.component.textfield.NumberField;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
-import com.vaadin.flow.dom.Element;
-import com.vaadin.flow.dom.ElementFactory;
 import com.vaadin.flow.router.*;
-import org.aspectj.weaver.ast.Not;
 
-import javax.annotation.PostConstruct;
 import javax.annotation.security.RolesAllowed;
 import java.util.UUID;
 
@@ -33,12 +27,11 @@ import java.util.UUID;
 @RolesAllowed({"ADMIN"})
 public class EditProductView extends Div implements HasUrlParameter<String>, AfterNavigationObserver{
 
-
-    Product currentProduct;
+    private final ProductRepository repository;
+    Product currentProduct = new Product();
     ProductService productService;
     String currentId;
     UUID id;
-    H1 url = new H1();
 
     private Binder<Product> binder = new Binder(Product.class);
     private TextField name = new TextField("Product Name");
@@ -63,22 +56,27 @@ public class EditProductView extends Div implements HasUrlParameter<String>, Aft
         try{
             Notification.show(this.currentId);
             this.id = UUID.fromString((this.currentId));
-            Notification.show(""+this.id);
-            obtainProduct(productService, this.id);
-            Notification.show(this.currentProduct.getName());
-        } catch (Exception e) {
+            Notification.show(this.id.toString());
+            H1 text = new H1(id.toString());
+            add(text);
+            if(repository.findById(this.id).isPresent()){
+                currentProduct = repository.findById(this.id).get();
+                binder.setBean(currentProduct);
+            }
 
+        } catch (NullPointerException e) {
+            Notification.show("Product not founded");
         }
     }
 
 
-    public EditProductView(ProductService productService){
+    public EditProductView(ProductService productService, ProductRepository repository){
+        this.repository = repository;
         addClassName("edit-product-view");
         setSizeFull();
         add(createTitle());
         add(createFormLayout());
         add(createButtonLayout(productService));
-
         initBinder();
         dollarPrefix.setText("$");
         dollarPrefix2.setText("$");
@@ -90,10 +88,7 @@ public class EditProductView extends Div implements HasUrlParameter<String>, Aft
 
 
     private void obtainProduct(ProductService productService, UUID uuid){
-        if(productService.get(uuid).isPresent()){
-            this.currentProduct = productService.get(uuid).get();
-            binder.setBean(this.currentProduct);
-        }
+
     }
 
     private Component createFormLayout() {
