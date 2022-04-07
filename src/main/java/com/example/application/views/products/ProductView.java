@@ -5,18 +5,11 @@ import com.example.application.data.entity.Product;
 import com.example.application.data.service.ProductService;
 import com.example.application.views.MainLayout;
 import com.vaadin.flow.component.Component;
-import com.vaadin.flow.component.ComponentUtil;
-import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.crud.BinderCrudEditor;
-
-import com.vaadin.flow.component.crud.CrudEditor;
 import com.vaadin.flow.component.dialog.Dialog;
-import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.GridVariant;
-import com.vaadin.flow.component.grid.editor.Editor;
 import com.vaadin.flow.component.html.*;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
@@ -24,21 +17,10 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
-import com.vaadin.flow.component.textfield.IntegerField;
-import com.vaadin.flow.component.textfield.NumberField;
-import com.vaadin.flow.component.textfield.TextField;
-import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
-import com.vaadin.flow.router.PageTitle;
-import com.vaadin.flow.router.QueryParameters;
-import com.vaadin.flow.router.Route;
+import com.vaadin.flow.router.*;
 
 import javax.annotation.security.RolesAllowed;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.atomic.AtomicReference;
 
 @PageTitle("Products")
 @Route(value = "products", layout = MainLayout.class)
@@ -46,20 +28,17 @@ import java.util.concurrent.atomic.AtomicReference;
 public class ProductView extends Div {
 
     Span status = new Span();
-    String id;
     Grid <Product> grid= new Grid<>(Product.class);
-    Editor<Product> editor = grid.getEditor();
     VerticalLayout layout = new VerticalLayout();
     H1 title = new H1("Product Table");
     Dialog dialog = new Dialog();
-
-
+    Product sendedProduct;
 
     public ProductView(ProductService productService){
         addClassName("product-view");
         setSizeFull();
         add(createLayout());
-        status.setVisible(false);
+        status.setVisible(true);
         dialog.getElement()
                 .setAttribute("aria-label", "Are you sure?");
         VerticalLayout dialogLayout = new VerticalLayout();
@@ -82,12 +61,23 @@ public class ProductView extends Div {
                     buttonEdit.addThemeVariants(ButtonVariant.LUMO_ICON,
                             ButtonVariant.LUMO_PRIMARY,
                             ButtonVariant.LUMO_TERTIARY);
-                    buttonEdit.addClickListener(e -> buttonEdit.getUI().ifPresent(ui ->
-                            ui.navigate("product/" + product.getId() + "/edit")));
+                    buttonEdit.addClickListener(e -> {buttonEdit.getUI().ifPresent(ui ->
+                            ui.navigate("product/" + product.getId()));
+
+                    });
                     buttonEdit.setIcon(new Icon(VaadinIcon.EDIT));
                 })).setHeader("Edit");
+        grid.asSingleSelect().addValueChangeListener(evt -> editProduct(evt.getValue()));
+    }
+
+    private void editProduct(Product product) {
 
     }
+
+    public Product getSendedProduct(){
+        return sendedProduct;
+    }
+
 
     private Component createHeaderLayout() {
         HorizontalLayout buttonLayout = new HorizontalLayout();

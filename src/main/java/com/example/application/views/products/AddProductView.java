@@ -32,6 +32,7 @@ public class AddProductView extends Div {
     private IntegerField current_inventory = new IntegerField("Current Inventory");
     private IntegerField minimum_inventory = new IntegerField("Minimum Inventory");
     Div dollarPrefix = new Div();
+    Div dollarPrefix2 = new Div();
 
     private Button cancel = new Button("Cancel");
     private Button save = new Button("Save");
@@ -47,6 +48,7 @@ public class AddProductView extends Div {
         add(createButtonLayout());
 
         dollarPrefix.setText("$");
+        dollarPrefix2.setText("$");
 
         binder.bindInstanceFields(this);
         clearForm();
