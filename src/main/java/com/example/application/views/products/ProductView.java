@@ -27,23 +27,22 @@ import javax.annotation.security.RolesAllowed;
 @RolesAllowed("USER")
 public class ProductView extends Div {
 
-    Span status = new Span();
     Grid <Product> grid= new Grid<>(Product.class);
     VerticalLayout layout = new VerticalLayout();
     H1 title = new H1("Product Table");
     Dialog dialog = new Dialog();
-    Product sendedProduct;
+    Product product;
+    boolean flag = false;
 
     public ProductView(ProductService productService){
         addClassName("product-view");
         setSizeFull();
         add(createLayout());
-        status.setVisible(true);
-        dialog.getElement()
-                .setAttribute("aria-label", "Are you sure?");
-        VerticalLayout dialogLayout = new VerticalLayout();
+        Dialog dialog = new Dialog();
+        VerticalLayout dialogLayout = createDialogLayout(dialog);
         dialog.add(dialogLayout);
-        add(dialog);
+        dialog.setModal(false);
+        dialog.setDraggable(true);
 
         grid.addThemeVariants(GridVariant.LUMO_ROW_STRIPES);
         grid.setItems(productService.list());
@@ -52,7 +51,11 @@ public class ProductView extends Div {
                     button.addThemeVariants(ButtonVariant.LUMO_ICON,
                             ButtonVariant.LUMO_ERROR,
                             ButtonVariant.LUMO_TERTIARY);
-                    button.addClickListener(e -> deleteProduct(productService, product));
+                    button.addClickListener(e -> {
+                            dialog.open();
+                                deleteProduct(productService, product);
+
+                    });
                     button.setIcon(new Icon(VaadinIcon.TRASH));
 
                 })).setHeader("Delete");
@@ -67,17 +70,8 @@ public class ProductView extends Div {
                     });
                     buttonEdit.setIcon(new Icon(VaadinIcon.EDIT));
                 })).setHeader("Edit");
-        grid.asSingleSelect().addValueChangeListener(evt -> editProduct(evt.getValue()));
+        add(dialog);
     }
-
-    private void editProduct(Product product) {
-
-    }
-
-    public Product getSendedProduct(){
-        return sendedProduct;
-    }
-
 
     private Component createHeaderLayout() {
         HorizontalLayout buttonLayout = new HorizontalLayout();
@@ -139,7 +133,9 @@ public class ProductView extends Div {
         fieldLayout.setAlignItems(FlexComponent.Alignment.STRETCH);
 
         Button cancelButton = new Button("Cancel", e -> dialog.close());
-        Button confirmButton = new Button("Delete", e -> dialog.close());
+        Button confirmButton = new Button("Delete", e -> {
+            dialog.close();
+        });
         confirmButton.addThemeVariants(ButtonVariant.LUMO_ERROR);
         HorizontalLayout buttonLayout = new HorizontalLayout(cancelButton,
                 confirmButton);
@@ -154,7 +150,4 @@ public class ProductView extends Div {
 
         return dialogLayout;
     }
-
-
-
 }

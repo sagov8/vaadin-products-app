@@ -72,7 +72,7 @@ public class AddProductView extends Div {
     private Component createFormLayout() {
         FormLayout formLayout = new FormLayout();
 
-        cost.setPrefixComponent(dollarPrefix);
+        cost.setPrefixComponent(dollarPrefix2);
         suggested_cell_price.setPrefixComponent(dollarPrefix);
         current_inventory.setMin(0);
         minimum_inventory.setMin(0);

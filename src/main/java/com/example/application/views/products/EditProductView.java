@@ -48,6 +48,7 @@ public class EditProductView extends Div implements HasUrlParameter<String>, Aft
 
     @Override
     public void setParameter(BeforeEvent event, @OptionalParameter String parameter) {
+
         this.currentId = parameter;
     }
 
