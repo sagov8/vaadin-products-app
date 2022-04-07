@@ -54,18 +54,14 @@ public class EditProductView extends Div implements HasUrlParameter<String>, Aft
     @Override
     public void afterNavigation(AfterNavigationEvent event) {
         try{
-            Notification.show(this.currentId);
-            this.id = UUID.fromString((this.currentId));
-            Notification.show(this.id.toString());
-            H1 text = new H1(id.toString());
-            add(text);
+            id = UUID.fromString((this.currentId));
             if(repository.findById(this.id).isPresent()){
                 currentProduct = repository.findById(this.id).get();
                 binder.setBean(currentProduct);
             }
 
         } catch (NullPointerException e) {
-            Notification.show("Product not founded");
+            Notification.show("Product not found");
         }
     }
 
@@ -80,15 +76,6 @@ public class EditProductView extends Div implements HasUrlParameter<String>, Aft
         initBinder();
         dollarPrefix.setText("$");
         dollarPrefix2.setText("$");
-    }
-
-    private void clearForm() {
-        binder.setBean(new Product());
-    }
-
-
-    private void obtainProduct(ProductService productService, UUID uuid){
-
     }
 
     private Component createFormLayout() {
